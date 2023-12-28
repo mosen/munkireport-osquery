@@ -1,0 +1,36 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    /**
+     * Typecheck JS in `.svelte` and `.js` files by default.
+     * Disable checkJs if you'd like to use dynamic types in JS.
+     * Note that setting allowJs false does not prevent the use
+     * of JS in `.svelte` files.
+     */
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
+    "types": [
+      "@types/node",
+      "@types/ziggy-js",
+      "vite/client"
+    ],
+    "paths": {
+      "@/": ["./resources/js/*"]
+    },
+    "outDir": "./public/build/assets"
+  },
+  "include": [
+    "resources/js/**/*.d.ts",
+    "resources/js/**/*.ts",
+    "resources/js/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "public"
+  ]
+}

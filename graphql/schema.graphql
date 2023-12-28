@@ -1,0 +1,29 @@
+
+interface OsQueryResult {
+    osquery_node_id: Int
+    _timestamp: DateTimeTz
+    host_identifier: String
+    epoch: Int
+    counter: Int
+    numerics: Boolean
+}
+
+type OsQueryBlockDevice implements OsQueryResult {
+    id: ID!
+    osquery_node_id: Int
+    _timestamp: DateTimeTz
+    host_identifier: String
+    epoch: Int
+    counter: Int
+    numerics: Boolean
+
+    block_size: Int
+    label: String
+    model: String
+    name: String
+    parent: String
+    size: Int
+    type: String
+    uuid: String
+    vendor: String
+}

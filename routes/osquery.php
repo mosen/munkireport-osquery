@@ -27,4 +27,11 @@ Route::group(['prefix' => 'osquery'], function () {
         Route::post('/log', 'Munkireport\Osquery\Http\Controllers\EndpointController@log')
             ->name('osquery.log');
     });
+
+    Route::middleware(['web'])->group(function () {
+        Route::get('/', 'Munkireport\Osquery\Http\Controllers\HomeController@index')
+            ->name('osquery.home');
+       Route::get('/nodes', 'Munkireport\Osquery\Http\Controllers\NodesController@index')
+        ->name('osquery.nodes');
+    });
 });

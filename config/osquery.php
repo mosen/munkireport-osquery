@@ -23,7 +23,7 @@ return [
      | The default interval (in seconds) between running
      | queries, if the query does not specify an interval.
      */
-    'default_interval' => (int) env('OSQUERY_DEFAULT_INTERVAL', 10),
+    'default_interval' => (int)env('OSQUERY_DEFAULT_INTERVAL', 10),
 
 
     /*
@@ -42,27 +42,35 @@ return [
     'static_schedule' => [
         'block_devices' => [
             'query' => 'SELECT * FROM block_devices;',
-            'interval' => 10,
+            'interval' => 60 * 60 * 24 * 1, // One per day very unlikely to change
+            'platform' => 'darwin',
+        ],
+        'certificates' => [
+            'query' => 'SELECT * FROM certificates;',
+            'interval' => 60 * 60, // One per hour, can vary
+        ],
+        'connected_displays' => [
+            'query' => 'SELECT * FROM connected_displays;',
+            'interval' => 60 * 60 * 24 * 1, // One per day very unlikely to change
             'platform' => 'darwin',
         ],
         'os_version' => [
             'query' => 'SELECT * FROM os_version;',
-            'interval' => 10,
+            'interval' => 60 * 60 * 24 * 1, // One per day very unlikely to change
             'platform' => 'darwin',
         ],
         'startup_items' => [
             'query' => 'SELECT * FROM startup_items;',
-            'interval' => 10,
+            'interval' => 60 * 60, // One per hour, can vary
             'platform' => 'darwin',
         ],
         'system_info' => [
             'query' => 'SELECT * FROM system_info;',
-            'interval' => 10,
-            'platform' => 'darwin',
+            'interval' => 60 * 60 * 24 * 1, // One per day very unlikely to change
         ],
         'wifi_status' => [
             'query' => 'SELECT * FROM wifi_status;',
-            'interval' => 3600,
+            'interval' => 60 * 60, // One per hour, can vary
             'platform' => 'darwin',
         ]
     ],
@@ -83,10 +91,12 @@ return [
      */
     'result_types' => [
         'block_devices' => \Munkireport\Osquery\Tables\BlockDevice::class,
-        'os_version'    => \Munkireport\Osquery\Tables\OsVersion::class,
+        'certificates' => \Munkireport\Osquery\Tables\Certificate::class,
+        'connected_displays' => \Munkireport\Osquery\Tables\ConnectedDisplay::class,
+        'os_version' => \Munkireport\Osquery\Tables\OsVersion::class,
         'startup_items' => \Munkireport\Osquery\Tables\StartupItem::class,
-        'system_info'   => \Munkireport\Osquery\Tables\SystemInfo::class,
-        'wifi_status'   => \Munkireport\Osquery\Tables\WifiStatus::class,
+        'system_info' => \Munkireport\Osquery\Tables\SystemInfo::class,
+        'wifi_status' => \Munkireport\Osquery\Tables\WifiStatus::class,
     ],
 
     /*
@@ -104,5 +114,21 @@ return [
 
     'static_file_paths' => [
 
+    ],
+
+
+    /*
+     |===============================================
+     | Node Logging Level
+     |===============================================
+     |
+     | By default, nodes log a very large amount of debug messaging depending on
+     | their client configuration. This mechanism provides a way of keeping logs
+     | tidy even if they are misconfigured.
+     */
+    'node_logging' => [
+        'ignore_filenames' => [
+            'tls.cpp' // The logging TLS plugin creates a huge amount of useless messages
+        ]
     ],
 ];

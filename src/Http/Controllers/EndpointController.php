@@ -26,8 +26,8 @@ class EndpointController extends Controller
     public function log(Request $request)
     {
         $node = Auth::user();
-        Log::warning($node);
-        Log::warning($request->getContent());
+        Log::debug($node);
+        Log::debug($request->getContent());
 
         $logType = $request->json('log_type');
 
@@ -35,23 +35,28 @@ class EndpointController extends Controller
             $data = $request->json('data');
 
             foreach ($data as $item) {
-                $statusLog = new NodeStatusLog();
-                $calendarTime = Arr::get($item, 'calendarTime', null);
+                $logFilename = Arr::get($item, 'filename', null);
+                if (Arr::has(config('osquery.node_logging.ignore_filenames', []), $logFilename)) {
+                    Log::debug("Ignored log from file: {$logFilename}");
+                } else {
+                    $statusLog = new NodeStatusLog();
+                    $calendarTime = Arr::get($item, 'calendarTime', null);
 
-                // Create stored datetime from calendarTime, don't bother with Unixtime because there's no TZ
-                if ($calendarTime) {
-                    // Sun May 16 11:43:03 2021 UTC
-                    $timestamp = Carbon::createFromFormat('D M d H:i:s Y e', $item['calendarTime']);
-                    $statusLog->_timestamp = $timestamp;
+                    // Create stored datetime from calendarTime, don't bother with Unixtime because there's no TZ
+                    if ($calendarTime) {
+                        // Sun May 16 11:43:03 2021 UTC
+                        $timestamp = Carbon::createFromFormat('D M d H:i:s Y e', $item['calendarTime']);
+                        $statusLog->_timestamp = $timestamp;
+                    }
+
+                    $statusLog->host_identifier = Arr::get($item, 'hostIdentifier', null);
+                    $statusLog->filename = Arr::get($item, 'filename', null);
+                    $statusLog->line = Arr::get($item, 'line', null);
+                    $statusLog->message = Arr::get($item, 'message', null);
+                    $statusLog->version = Arr::get($item, 'version', null);
+
+                    $node->statusLogs()->save($statusLog);
                 }
-
-                $statusLog->host_identifier = Arr::get($item, 'hostIdentifier', null);
-                $statusLog->filename = Arr::get($item, 'filename', null);
-                $statusLog->line = Arr::get($item, 'line', null);
-                $statusLog->message = Arr::get($item, 'message', null);
-                $statusLog->version = Arr::get($item, 'version', null);
-
-                $node->statusLogs()->save($statusLog);
             }
         } elseif ($logType == "result") {
             $data = $request->json('data');
@@ -67,23 +72,37 @@ class EndpointController extends Controller
                     Log::error("tried to instantiate osquery result model for query {$item['name']}, {$modelName}, but got nothing");
                 }
                 Log::debug("populating new instance of {$modelName}");
-                $statusLog = new $modelName;
-                $statusLog->fill($item['columns']);
-//                Log::debug($item['columns']);
-                // Log::debug($statusLog->toArray());
 
                 $calendarTime = Arr::get($item, 'calendarTime', null);
-                if ($calendarTime) {
-                    // Sun May 16 11:43:03 2021 UTC
-                    $timestamp = Carbon::createFromFormat('D M d H:i:s Y e', $item['calendarTime']);
-                    $statusLog->_timestamp = $timestamp;
+                // Sun May 16 11:43:03 2021 UTC
+                $timestamp = $calendarTime ? Carbon::createFromFormat('D M d H:i:s Y e', $item['calendarTime']) : null;
+
+                if ($item['action'] == 'snapshot') {
+                    foreach ($item['snapshot'] as $snapshot) {
+                        $statusLog = new $modelName;
+                        $statusLog->fill($snapshot);
+                        $statusLog->_timestamp = $timestamp;
+                        $statusLog->host_identifier = Arr::get($item, 'hostIdentifier', null);
+                        $node->statusLogs()->save($statusLog);
+                    }
+
+                } else {
+                    $statusLog = new $modelName;
+                    $statusLog->fill($item['columns']);
+
+                    $calendarTime = Arr::get($item, 'calendarTime', null);
+                    if ($calendarTime) {
+                        // Sun May 16 11:43:03 2021 UTC
+                        $timestamp = Carbon::createFromFormat('D M d H:i:s Y e', $item['calendarTime']);
+                        $statusLog->_timestamp = $timestamp;
+                    }
+
+                    $statusLog->host_identifier = Arr::get($item, 'hostIdentifier', null);
+
+                    $node->statusLogs()->save($statusLog);
                 }
 
-//                $statusLog->unix_time = Arr::get($item, 'unixTime', null);
-                $statusLog->host_identifier = Arr::get($item, 'hostIdentifier', null);
 
-
-                $node->statusLogs()->save($statusLog);
             }
         } else  {
             Log::warning("Unknown log type in osquery request: ${$logType}");

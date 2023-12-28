@@ -12,8 +12,9 @@
     ],
     "require": {
         "php": ">=8.0",
-        "illuminate/support": "^v9.0",
-        "illuminate/http": "^9.0"
+        "illuminate/support": "^v10.0",
+        "illuminate/http": "^10.0",
+        "inertiajs/inertia-laravel": "^0.6.9"
     },
     "extra": {
         "laravel": {
@@ -22,6 +23,16 @@
             ],
             "aliases": {
                 "Osquery": "Munkireport\\Osquery\\Facades\\Osquery"
+            }
+        },
+        "munkireport": {
+            "navigation": {
+                "listings": [
+                    {
+                        "route": "/osquery/nodes",
+                        "i18n": "osquery.nodes"
+                    }
+                ]
             }
         }
     },

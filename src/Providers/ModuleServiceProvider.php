@@ -9,11 +9,6 @@ use Munkireport\Osquery\Node;
 
 class ModuleServiceProvider extends ServiceProvider
 {
-    // boot
-//Auth::extend('nodekey', function ($app, $name, array $config) {
-//    return new NodeKeyGuard($name, new EloquentNodeProvider(Node::class), request());
-//});
-
     public function boot()
     {
         $packageDir = realpath(__DIR__.'/../../');
@@ -28,8 +23,6 @@ class ModuleServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
 //            $this->commands([
-//                JamfSyncCommand::class,
-//                JamfListComputersCommand::class,
 //            ]);
         }
 
@@ -37,16 +30,10 @@ class ModuleServiceProvider extends ServiceProvider
             return new NodeKeyGuard($name, new EloquentNodeProvider(Node::class), request());
         });
 
-//        Auth::provider('nodes', function ($app, array $config) {
-//           return new EloquentNodeProvider(Node::class);
-//        });
     }
 
     public function register()
     {
         parent::register();
-//        $this->app->bind(Jamf::class, function($app) {
-//            return new Jamf();
-//        });
     }
 }

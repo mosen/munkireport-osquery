@@ -112,6 +112,18 @@ class NodeKeyGuard implements Guard
     /**
      * @inheritDoc
      */
+    public function hasUser()
+    {
+        if (!$this->request->json('node_key')) {
+            return false;
+        }
+
+        return ($this->provider->retrieveByNodeKey($this->request->json('node_key')) !== null);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setUser(Authenticatable $user)
     {
         // TODO: Implement setUser() method.
