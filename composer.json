@@ -27,12 +27,12 @@
         },
         "munkireport": {
             "navigation": {
-                "listings": [
-                    {
-                        "route": "/osquery/nodes",
+                "listings": {
+                    "nodes": {
+                        "route": "osquery.nodes",
                         "i18n": "osquery.nodes"
                     }
-                ]
+                }
             }
         }
     },
