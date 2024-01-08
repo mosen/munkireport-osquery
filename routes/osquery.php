@@ -28,10 +28,12 @@ Route::group(['prefix' => 'osquery'], function () {
             ->name('osquery.log');
     });
 
-    Route::middleware(['web'])->group(function () {
+    Route::middleware(['web', 'auth'])->group(function () {
         Route::get('/', 'Munkireport\Osquery\Http\Controllers\HomeController@index')
             ->name('osquery.home');
-       Route::get('/nodes', 'Munkireport\Osquery\Http\Controllers\NodesController@index')
-        ->name('osquery.nodes');
+        Route::get('/nodes', 'Munkireport\Osquery\Http\Controllers\NodesController@index')
+            ->name('osquery.nodes');
+        Route::get('/nodes/{node}', 'Munkireport\Osquery\Http\Controllers\NodesController@show')
+            ->name('osquery.nodes.show');
     });
 });

@@ -32,6 +32,12 @@
                         "route": "osquery.nodes",
                         "i18n": "osquery.nodes"
                     }
+                },
+                "admin_pages": {
+                    "queries": {
+                        "route": "osquery.admin.queries",
+                        "i18n": "osquery.queries"
+                    }
                 }
             }
         }

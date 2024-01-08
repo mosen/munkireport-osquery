@@ -21,6 +21,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom($packageDir . '/resources/lang', 'osquery');
         $this->loadViewsFrom($packageDir . '/resources/views', 'osquery');
 
+
         if ($this->app->runningInConsole()) {
 //            $this->commands([
 //            ]);

@@ -15,6 +15,14 @@ class Node extends Model implements Authenticatable
 
     //// Relationships
 
+    public function osVersion()
+    {
+        return $this->hasMany(
+            'Munkireport\Osquery\Tables\OsVersion',
+            'osquery_node_id',
+        );
+    }
+
     public function statusLogs()
     {
         return $this->hasMany(
@@ -26,7 +34,15 @@ class Node extends Model implements Authenticatable
     public function startupItems()
     {
         return $this->hasMany(
-            'Munkireport\Osquery\StartupItem',
+            'Munkireport\Osquery\Tables\StartupItem',
+            'osquery_node_id'
+        );
+    }
+
+    public function systemInfo()
+    {
+        return $this->hasMany(
+            'Munkireport\Osquery\Tables\SystemInfo',
             'osquery_node_id'
         );
     }
